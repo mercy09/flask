@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sales Company Management{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            height: 100vh;
+            background-color: #2c3e50;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            z-index: 1000;
+        }
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 15px 20px;
+            border-radius: 0;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #34495e;
+            color: white;
+        }
+        .sidebar .nav-link.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .navbar-brand {
+            color: #ecf0f1 !important;
+            font-weight: bold;
+            padding: 20px;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        .stats-card {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+        .stats-card-success {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            color: white;
+        }
+        .stats-card-warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+        }
+        .stats-card-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="navbar-brand">
+            <i class="fas fa-chart-line me-2"></i>
+            Sales Pro
+        </div>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <a class="nav-link" href="{{ url_for('customers') }}">
+                <i class="fas fa-users me-2"></i>Customers
+            </a>
+            <a class="nav-link" href="{{ url_for('products') }}">
+                <i class="fas fa-box me-2"></i>Products
+            </a>
+            <a class="nav-link" href="{{ url_for('orders') }}">
+                <i class="fas fa-shopping-cart me-2"></i>Orders
+            </a>
+            <a class="nav-link" href="{{ url_for('analytics') }}">
+                <i class="fas fa-chart-bar me-2"></i>Analytics
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

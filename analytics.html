@@ -1,0 +1,63 @@
+
+{% extends "base.html" %}
+{% block title %}Analytics - Sales Company{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4">Sales Analytics</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Top Selling Products</h5>
+            </div>
+            <div class="card-body">
+                {% if top_products %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product, quantity in top_products %}
+                                <tr>
+                                    <td>{{ product }}</td>
+                                    <td><span class="badge bg-primary">{{ quantity }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No sales data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Orders by Status</h5>
+            </div>
+            <div class="card-body">
+                {% if status_stats %}
+                    {% for status, count, total in status_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-{{ 'success' if status == 'delivered' else 'warning' if status == 'processing' else 'secondary' }}">
+                            {{ status.title() }}
+                        </span>
+                        <span>Count: {{ count }}</span>
+                        <span>Total: ${{ "%.2f"|format(total or 0) }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No order status data available</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

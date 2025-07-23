@@ -1,0 +1,139 @@
+
+{% extends "base.html" %}
+
+{% block title %}Customers - Sales Company{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Customers</h1>
+    <a href="{{ url_for('add_customer') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add Customer
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if customers.items %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Orders</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers.items %}
+                        <tr>
+                            <td>{{ customer.id }}</td>
+                            <td>
+                                <strong>{{ customer.name }}</strong>
+                            </td>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.phone or 'N/A' }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ customer.orders|length }}</span>
+                            </td>
+                            <td>{{ customer.created_at.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('edit_customer', id=customer.id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="deleteCustomer({{ customer.id }}, '{{ customer.name }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if customers.pages > 1 %}
+            <nav aria-label="Customer pagination">
+                <ul class="pagination justify-content-center">
+                    {% if customers.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('customers', page=customers.prev_num) }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for page_num in customers.iter_pages() %}
+                        {% if page_num %}
+                            {% if page_num != customers.page %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('customers', page=page_num) }}">{{ page_num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if customers.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('customers', page=customers.next_num) }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No customers found</h5>
+                <p class="text-muted">Start by adding your first customer.</p>
+                <a href="{{ url_for('add_customer') }}" class="btn btn-primary">Add Customer</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete customer <strong id="customerName"></strong>?</p>
+                <p class="text-danger small">This action cannot be undone and will also delete all associated orders.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteCustomer(customerId, customerName) {
+    document.getElementById('customerName').textContent = customerName;
+    document.getElementById('deleteForm').action = '/customers/' + customerId + '/delete';
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %}
