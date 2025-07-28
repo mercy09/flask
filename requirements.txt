@@ -13,3 +13,4 @@ SQLAlchemy==2.0.30
 email-validator==2.0.0
 psycopg2-binary==2.9.7
 gunicorn==21.2.0
+Flask==2.3.3
