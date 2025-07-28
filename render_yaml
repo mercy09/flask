@@ -4,7 +4,7 @@ services:
     name: sales-company-app
     env: python
     runtime: python
-    pythonVersion: 3.10
+    pythonVersion: 3.10.13
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     plan: free
